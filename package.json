@@ -1,0 +1,23 @@
+{
+  "name": "survey-results",
+  "version": "1.0.0",
+  "description": "Team happiness survey results",
+  "main": "index.js",
+  "scripts": {
+    "start": "ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8000, :DocumentRoot => Dir.pwd).start'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mitchellhillman/survey-results.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mitchellhillman/survey-results/issues"
+  },
+  "homepage": "https://github.com/mitchellhillman/survey-results#readme",
+  "dependencies": {
+    "prettier": "^3.0.3"
+  }
+}
