@@ -40,16 +40,19 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
 
   const filteredData = data.filter(({ question }) => question === questions[2]);
 
-  xScale.domain([
-    d3.min(data, ({ timestamp }) => timestamp),
-    d3.max(data, ({ timestamp }) => timestamp),
-  ]);
+  xScale
+    .domain([
+      d3.min(data, ({ timestamp }) => timestamp),
+      d3.max(data, ({ timestamp }) => timestamp),
+    ])
+    .nice()
+    .tickFormat(50);
 
   yScale.domain([0, 10]);
 
   console.log('data', data);
 
-  svg
+  const points = svg
     .selectAll('circle')
     .data(filteredData)
     .enter()
@@ -60,11 +63,31 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     .attr('cy', ({ answer }) => yScale(answer))
     .attr('cx', ({ timestamp }) => xScale(timestamp));
 
+  const simulation = d3
+    .forceSimulation(points)
+    .force(
+      'cx',
+      d3.forceX((d) => d.x0),
+    )
+    .force(
+      'cy',
+      d3.forceY((d) => {
+        console.log('test');
+        return d.y0;
+      }),
+    )
+    .force(
+      'collide',
+      d3.forceCollide((d) => d.r),
+    );
+
+  for (let i = 0; i < 700; i++) simulation.tick();
+
   // Add x axis
   svg
     .append('g')
     .attr('transform', 'translate(0,' + height + ')')
-    .call(d3.axisBottom(xScale));
+    .call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.timeFormat('%Y-%m-%d')));
 
   // Add y axis
   svg.append('g').call(d3.axisLeft(yScale));
