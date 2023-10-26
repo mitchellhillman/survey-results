@@ -27,6 +27,12 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     '#27aeef',
     '#b33dc6',
   ];
+  const sprintDates = [
+    new Date('10/08/23'),
+    new Date('10/22/23'),
+    new Date('11/05/23'),
+    new Date('11/19/23'),
+  ];
 
   const questions = data.reduce((acc, curr) => {
     if (!acc.includes(curr.question)) {
@@ -36,16 +42,14 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
   }, []);
 
   var margin = { top: 60, right: 20, bottom: 30, left: 40 },
-    width = 560 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    width = 610 - margin.left - margin.right,
+    height = 350 - margin.top - margin.bottom;
   const radius = 5;
   var xScale = d3.scaleTime().range([0, width]);
 
+  const datedomain = data.map(({ timestamp }) => timestamp).concat(sprintDates);
   xScale
-    .domain([
-      d3.min(data, ({ timestamp }) => timestamp),
-      d3.max(data, ({ timestamp }) => timestamp),
-    ])
+    .domain([d3.min(datedomain), d3.max(datedomain)])
     .nice()
     .tickFormat(50);
 
@@ -75,14 +79,25 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
       .append('text')
       .text(step + 1 + '.) ' + questions[step]);
 
-    graph
-      // .attr('transform', 'translate(-20, -30)')
+    graph // middle line
       .append('line')
       .attr('stroke', '#ddd')
+      .style('stroke-width', '1')
       .attr('x1', 0)
       .attr('y1', yScale(5))
       .attr('x2', width)
       .attr('y2', yScale(5));
+
+    for (let sprint = 0; sprint < sprintDates.length; sprint++) {
+      graph // sprint dates
+        .append('line')
+        .attr('stroke', '#ddd')
+        .style('stroke-width', '1')
+        .attr('x1', xScale(sprintDates[sprint]))
+        .attr('y1', 0)
+        .attr('x2', xScale(sprintDates[sprint]))
+        .attr('y2', height);
+    }
 
     graph
       .selectAll('circle')
