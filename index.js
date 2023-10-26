@@ -76,6 +76,15 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
       .text(step + 1 + '.) ' + questions[step]);
 
     graph
+      // .attr('transform', 'translate(-20, -30)')
+      .append('line')
+      .attr('stroke', '#ddd')
+      .attr('x1', 0)
+      .attr('y1', yScale(5))
+      .attr('x2', width)
+      .attr('y2', yScale(5));
+
+    graph
       .selectAll('circle')
       .data(filteredData)
       .enter()
