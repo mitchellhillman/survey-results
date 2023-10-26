@@ -38,7 +38,7 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     return acc;
   }, []);
 
-  const filteredData = data.filter(({ question }) => (questions = questions[1]));
+  const filteredData = data.filter(({ question }) => question === questions[2]);
 
   xScale.domain([
     d3.min(data, ({ timestamp }) => timestamp),
@@ -54,8 +54,9 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     .data(filteredData)
     .enter()
     .append('circle')
-    .attr('r', 5)
-    .style('fill', 'rgba(0,0,0,0.2)')
+    .attr('r', 15)
+    .style('fill', 'red')
+    .style('opacity', '0.3')
     .attr('cy', ({ answer }) => yScale(answer))
     .attr('cx', ({ timestamp }) => xScale(timestamp));
 
