@@ -1,11 +1,10 @@
-// Set graph margins and dimensions
 var margin = { top: 20, right: 20, bottom: 30, left: 40 },
   width = 1200 - margin.left - margin.right,
   height = 1000 - margin.top - margin.bottom;
 
-// Set ranges
 var xScale = d3.scaleTime().range([0, width]);
-var yScale = d3.scaleLinear().domain([0, 10]).range([height, 0]).nice();
+var yScale = d3.scaleLinear().range([height, 0]);
+
 var svg = d3
   .select('body')
   .append('svg')
@@ -16,8 +15,6 @@ var svg = d3
 
 // Get data
 d3.csv('./data/23-10-17.csv').then(function (rawData) {
-  console.log('rawData', rawData);
-
   const data = rawData
     .map((response) => {
       const timestamp = response['Timestamp'];
@@ -34,8 +31,6 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     })
     .flat();
 
-  console.log('data', data);
-
   const questions = data.reduce((acc, curr) => {
     if (!acc.includes(curr.question)) {
       acc.push(curr.question);
@@ -43,28 +38,24 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     return acc;
   }, []);
 
-  console.log('questions', questions);
-
   xScale.domain([
     d3.min(data, ({ timestamp }) => timestamp),
     d3.max(data, ({ timestamp }) => timestamp),
   ]);
 
+  yScale.domain([0, 10]);
+
+  console.log('data', data);
+
   svg
-    .selectAll('.bar')
+    .selectAll('circle')
     .data(data)
     .enter()
     .append('circle')
     .attr('r', 5)
     .style('fill', 'rgba(0,0,0,0.2)')
-    .attr('cx', ({ timestamp }) => {
-      console.log('timestamp', timestamp);
-      console.log('xScale(timestamp)', xScale(timestamp));
-      return xScale(timestamp);
-    })
-    .attr('cy', ({ answer }) => {
-      return yScale(answer);
-    });
+    .attr('cy', ({ answer }) => yScale(answer))
+    .attr('cx', ({ timestamp }) => xScale(timestamp));
 
   // Add x axis
   svg

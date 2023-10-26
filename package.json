@@ -4,7 +4,7 @@
   "description": "Team happiness survey results",
   "main": "index.js",
   "scripts": {
-    "start": "ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8000, :DocumentRoot => Dir.pwd).start'",
+    "start": "ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8080, :DocumentRoot => Dir.pwd).start'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
