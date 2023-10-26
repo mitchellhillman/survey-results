@@ -38,6 +38,8 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     return acc;
   }, []);
 
+  const filteredData = data.filter(({ question }) => (questions = questions[1]));
+
   xScale.domain([
     d3.min(data, ({ timestamp }) => timestamp),
     d3.max(data, ({ timestamp }) => timestamp),
@@ -49,7 +51,7 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
 
   svg
     .selectAll('circle')
-    .data(data)
+    .data(filteredData)
     .enter()
     .append('circle')
     .attr('r', 5)
