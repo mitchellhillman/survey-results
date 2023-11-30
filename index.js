@@ -17,21 +17,22 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     .flat();
 
   const colors = [
-    '#ea5545',
-    '#f46a9b',
-    '#ef9b20',
-    '#edbf33',
-    '#ede15b',
-    '#bdcf32',
-    '#87bc45',
-    '#27aeef',
-    '#b33dc6',
+    '#fde725',
+    '#addc30',
+    '#5ec962',
+    '#28ae80',
+    '#21918c',
+    '#2c728e',
+    '#3b528b',
+    '#472d7b',
+    '#440154',
   ];
   const sprintDates = [
     new Date('10/08/23'),
     new Date('10/22/23'),
     new Date('11/05/23'),
     new Date('11/19/23'),
+    new Date('12/03/23'),
   ];
 
   const questions = data.reduce((acc, curr) => {
@@ -44,7 +45,7 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
   var margin = { top: 60, right: 20, bottom: 30, left: 40 },
     width = 610 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
-  const radius = 5;
+  const radius = 10;
   var xScale = d3.scaleTime().range([0, width]);
 
   const datedomain = data.map(({ timestamp }) => timestamp).concat(sprintDates);
@@ -74,8 +75,8 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
       .append('g')
       .attr('transform', 'translate(-20, -30)')
       .style('font-family', 'sans-serif')
-      .style('font-weight', 'bold')
-      .style('font-size', '12px')
+      // .style('font-weight', 'bold')
+      .style('font-size', '20px')
       .append('text')
       .text(step + 1 + '.) ' + questions[step]);
 
@@ -99,19 +100,6 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
         .attr('y2', height);
     }
 
-    graph
-      .selectAll('circle')
-      .data(filteredData)
-      .enter()
-      .append('circle')
-      .attr('r', radius)
-      .style('fill', colors[step])
-      .style('stroke', '#fff')
-      .style('stroke-width', '1')
-      .style('opacity', '1')
-      .attr('cy', ({ answer }) => yScale(answer))
-      .attr('cx', ({ timestamp }) => xScale(timestamp));
-
     // Add x axis
     graph
       .append('g')
@@ -120,5 +108,38 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
 
     // Add y axis
     graph.append('g').call(d3.axisLeft(yScale));
+
+    // circles
+    graph
+      .selectAll('circle')
+      .data(filteredData)
+      .enter()
+      .append('circle')
+      .style('fill', colors[step])
+      .style('stroke', '#fff')
+      .style('stroke-width', '1')
+      .attr('r', radius)
+      .attr('cx', ({ timestamp }) => xScale(timestamp))
+      .attr('cy', ({ answer }) => yScale(answer));
+
+    // d3.forceSimulation(filteredData).force('collide', d3.forceCollide(10));
+
+    let simulation = d3
+      .forceSimulation(filteredData)
+      // .force('x', d3.forceX(({ timestamp }) => xScale(timestamp)).strength(1.5))
+      // .force('y', d3.forceX(({ answer }) => xScale(answer)).strength(1.5))
+      .force('collision', d3.forceCollide().radius(radius))
+      // .alphaDecay(0)
+      // .alpha(0.3)
+      .on('tick', () => {
+        d3.selectAll('circle')
+          .attr('cx', ({ timestamp }) => xScale(timestamp))
+          .attr('cy', ({ answer }) => yScale(answer));
+      });
+
+    let init_decay = setTimeout(function () {
+      console.log('start alpha decay');
+      simulation.alphaDecay(0.1);
+    }, 3000); // start decay after 3 seconds
   }
 });
