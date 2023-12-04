@@ -87,7 +87,7 @@ d3.csv('./data/responses.csv').then(function (rawData) {
       .style('font-size', '16px')
       .append('text')
       .text(
-        `${step + 1}'.) ${question.substring(0, maxLength).trim()}${
+        `${step + 1}.) ${question.substring(0, maxLength).trim()}${
           question.length > maxLength ? '... ' : ''
         }`,
       );
