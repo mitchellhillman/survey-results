@@ -1,5 +1,5 @@
 // Get data
-d3.csv('./data/23-10-17.csv').then(function (rawData) {
+d3.csv('./data/responses.csv').then(function (rawData) {
   const data = rawData
     .map((response) => {
       const timestamp = response['Timestamp'];
@@ -27,6 +27,7 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
     '#472d7b',
     '#440154',
   ];
+
   const sprintDates = [
     new Date('10/08/23'),
     new Date('10/22/23'),
@@ -45,10 +46,13 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
   var margin = { top: 60, right: 20, bottom: 30, left: 40 },
     width = 610 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
-  const radius = 10;
+
+  const radius = 7;
+
   var xScale = d3.scaleTime().range([0, width]);
 
   const datedomain = data.map(({ timestamp }) => timestamp).concat(sprintDates);
+
   xScale
     .domain([d3.min(datedomain), d3.max(datedomain)])
     .nice()
@@ -61,6 +65,7 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
   for (let step = 0; step < questions.length; step++) {
     const filteredData = data.filter(({ question }) => question === questions[step]);
 
+    // Canvas
     var graph = d3
       .select('body')
       .append('svg')
@@ -71,16 +76,19 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+    // Title
     graph
       .append('g')
       .attr('transform', 'translate(-20, -30)')
       .style('font-family', 'sans-serif')
-      // .style('font-weight', 'bold')
       .style('font-size', '20px')
       .append('text')
       .text(step + 1 + '.) ' + questions[step]);
 
-    graph // middle line
+    // Lines
+
+    // middle line
+    graph
       .append('line')
       .attr('stroke', '#ddd')
       .style('stroke-width', '1')
@@ -89,8 +97,9 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
       .attr('x2', width)
       .attr('y2', yScale(5));
 
+    // sprint dates
     for (let sprint = 0; sprint < sprintDates.length; sprint++) {
-      graph // sprint dates
+      graph
         .append('line')
         .attr('stroke', '#ddd')
         .style('stroke-width', '1')
@@ -100,21 +109,22 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
         .attr('y2', height);
     }
 
-    // Add x axis
+    // x axis
     graph
       .append('g')
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.timeFormat('%Y-%m-%d')));
 
-    // Add y axis
+    // y axis
     graph.append('g').call(d3.axisLeft(yScale));
 
     // circles
     graph
-      .selectAll('circle')
+      .selectAll('.circ')
       .data(filteredData)
       .enter()
       .append('circle')
+      .attr('class', 'circ')
       .style('fill', colors[step])
       .style('stroke', '#fff')
       .style('stroke-width', '1')
@@ -122,24 +132,27 @@ d3.csv('./data/23-10-17.csv').then(function (rawData) {
       .attr('cx', ({ timestamp }) => xScale(timestamp))
       .attr('cy', ({ answer }) => yScale(answer));
 
-    // d3.forceSimulation(filteredData).force('collide', d3.forceCollide(10));
-
     let simulation = d3
       .forceSimulation(filteredData)
-      // .force('x', d3.forceX(({ timestamp }) => xScale(timestamp)).strength(1.5))
-      // .force('y', d3.forceX(({ answer }) => xScale(answer)).strength(1.5))
-      .force('collision', d3.forceCollide().radius(radius))
-      // .alphaDecay(0)
-      // .alpha(0.3)
+      .force(
+        'x',
+        d3.forceX(({ timestamp }) => xScale(timestamp)),
+      )
+      .force(
+        'y',
+        d3.forceY(({ answer }) => yScale(answer)),
+      )
+      .force('collide', d3.forceCollide(radius))
+      .alphaDecay(0)
+      .alpha(0.3)
       .on('tick', () => {
-        d3.selectAll('circle')
-          .attr('cx', ({ timestamp }) => xScale(timestamp))
-          .attr('cy', ({ answer }) => yScale(answer));
+        d3.selectAll('.circ')
+          .attr('cx', ({ x }) => x)
+          .attr('cy', ({ y }) => y);
       });
 
-    let init_decay = setTimeout(function () {
-      console.log('start alpha decay');
+    let init_decay = setTimeout(() => {
       simulation.alphaDecay(0.1);
-    }, 3000); // start decay after 3 seconds
+    }, 3000);
   }
 });
