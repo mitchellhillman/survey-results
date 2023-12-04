@@ -77,13 +77,20 @@ d3.csv('./data/responses.csv').then(function (rawData) {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Title
+
+    const question = questions[step];
+    const maxLength = 70;
     graph
       .append('g')
       .attr('transform', 'translate(-20, -30)')
       .style('font-family', 'sans-serif')
-      .style('font-size', '20px')
+      .style('font-size', '16px')
       .append('text')
-      .text(step + 1 + '.) ' + questions[step]);
+      .text(
+        `${step + 1}'.) ${question.substring(0, maxLength).trim()}${
+          question.length > maxLength ? '... ' : ''
+        }`,
+      );
 
     // Lines
 
