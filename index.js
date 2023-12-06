@@ -18,13 +18,14 @@ d3.csv('./data/responses.csv').then(function (rawData) {
 
   const colors = [
     '#fde725',
-    '#addc30',
-    '#5ec962',
-    '#28ae80',
-    '#21918c',
-    '#2c728e',
-    '#3b528b',
-    '#472d7b',
+    '#b5de2b',
+    '#6ece58',
+    '#35b779',
+    '#1f9e89',
+    '#26828e',
+    '#31688e',
+    '#3e4989',
+    '#482878',
     '#440154',
   ];
 
@@ -80,16 +81,24 @@ d3.csv('./data/responses.csv').then(function (rawData) {
 
     const question = questions[step];
     const maxLength = 70;
-    graph
+    var title = graph
+      .append('g')
+      .style('font-family', "'Roboto Condensed', sans-serif")
+      .style('font-size', '18px');
+
+    title
       .append('g')
       .attr('transform', 'translate(-20, -30)')
-      .style('font-family', 'sans-serif')
-      .style('font-size', '16px')
+      .style('font-weight', 'bold')
+      .append('text')
+      .text(`${step + 1}.)`);
+
+    title
+      .append('g')
+      .attr('transform', 'translate(10, -30)')
       .append('text')
       .text(
-        `${step + 1}.) ${question.substring(0, maxLength).trim()}${
-          question.length > maxLength ? '... ' : ''
-        }`,
+        `${question.substring(0, maxLength).trim()}${question.length > maxLength ? '... ' : ''}`,
       );
 
     // Lines
@@ -119,11 +128,15 @@ d3.csv('./data/responses.csv').then(function (rawData) {
     // x axis
     graph
       .append('g')
+      .style('font-family', "'Roboto Condensed', sans-serif")
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.timeFormat('%Y-%m-%d')));
 
     // y axis
-    graph.append('g').call(d3.axisLeft(yScale));
+    graph
+      .append('g')
+      .style('font-family', "'Roboto Condensed', sans-serif")
+      .call(d3.axisLeft(yScale));
 
     // circles
     graph
@@ -132,7 +145,7 @@ d3.csv('./data/responses.csv').then(function (rawData) {
       .enter()
       .append('circle')
       .attr('class', 'circ')
-      .style('fill', colors[step])
+      .style('fill', ({ answer }) => colors[10 - answer])
       .style('stroke', '#fff')
       .style('stroke-width', '1')
       .attr('r', radius)
