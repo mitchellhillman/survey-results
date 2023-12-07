@@ -44,7 +44,7 @@ d3.csv('./data/responses.csv').then(function (rawData) {
     return acc;
   }, []);
 
-  var margin = { top: 60, right: 20, bottom: 30, left: 40 },
+  var margin = { top: 60, right: 30, bottom: 30, left: 30 },
     width = 610 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
 
@@ -70,8 +70,6 @@ d3.csv('./data/responses.csv').then(function (rawData) {
     var graph = d3
       .select('body')
       .append('svg')
-      .style('float', 'left')
-      .style('margin', '20px')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
@@ -146,8 +144,6 @@ d3.csv('./data/responses.csv').then(function (rawData) {
       .append('circle')
       .attr('class', 'circ')
       .style('fill', ({ answer }) => colors[10 - answer])
-      .style('stroke', '#fff')
-      .style('stroke-width', '1')
       .attr('r', radius)
       .attr('cx', ({ timestamp }) => xScale(timestamp))
       .attr('cy', ({ answer }) => yScale(answer));
