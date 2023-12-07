@@ -45,8 +45,8 @@ d3.csv('./data/responses.csv').then(function (rawData) {
   }, []);
 
   var margin = { top: 60, right: 30, bottom: 30, left: 30 },
-    width = 610 - margin.left - margin.right,
-    height = 350 - margin.top - margin.bottom;
+    width = 600 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
   const radius = 7;
 
